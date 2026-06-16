@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -56,12 +57,11 @@ void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
   // Second argument: How big can the line be
   // Third argument: Input Stream
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
-      // maybe you can say something like 
-      // if follows Pattern: Placeholder.Placeholder.Placeholder.Placeholder
-      // then show it else do nothing with line
-      // like "%" in SQL
-    if (strstr(line, "The following Tests are available:") == NULL) {
-      mvwprintw(windowToPrintAt, row, 2, "%s", line);
+    char a[256], b[256], c[256], d[256];
+    bool lineIsValidTest =
+        sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
+    if (lineIsValidTest) {
+      mvwprintw(windowToPrintAt, row, 2, "%s", newLine);
       wrefresh(windowToPrintAt);
       row++;
     }
