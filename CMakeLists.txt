@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-set(ENV{PROJECTNAME} dotnet-test-tui)
+set(ENV{PROJECTNAME} lazyunit)
 
 project($ENV{PROJECTNAME} VERSION 1.0)
 

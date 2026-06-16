@@ -47,7 +47,7 @@ WINDOW *RightWin(int top_win_height, int max_y, int max_x) {
 }
 
 void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
-  FILE *dotnetTestCommand = popen("cat ~/Dotnet-Test-TUI/tests.txt", "r");
+  FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
 
   char line[4096];
   int row = 1;
