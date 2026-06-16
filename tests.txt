@@ -1,0 +1,58 @@
+Test run for /home/orkan/lazydotnet/tests/lazydotnet.UnitTests/bin/Debug/net10.0/lazydotnet.UnitTests.dll (.NETCoreApp,Version=v10.0)
+Test run for /home/orkan/lazydotnet/tests/lazydotnet.IntegrationTests/bin/Debug/net10.0/lazydotnet.IntegrationTests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+VSTest version 18.0.2 (x64)
+
+The following Tests are available:
+The following Tests are available:
+    lazydotnet.UnitTests.AppCliTests.RunAsync_ShouldInvokeOnLog
+    lazydotnet.UnitTests.CommandServiceTests.BuildProjectAsync_ShouldLogRunningCommand
+    lazydotnet.UnitTests.DashboardScreenTests.HelpKeyBinding_Match_ShouldOnlyTriggerOnQuestionMark(keyChar: '?', key: Oem2, shift: False, alt: False, control: False, expected: True)
+    lazydotnet.UnitTests.DashboardScreenTests.HelpKeyBinding_Match_ShouldOnlyTriggerOnQuestionMark(keyChar: '?', key: Oem2, shift: True, alt: False, control: False, expected: True)
+    lazydotnet.UnitTests.DashboardScreenTests.HelpKeyBinding_Match_ShouldOnlyTriggerOnQuestionMark(keyChar: '/', key: Oem2, shift: False, alt: False, control: False, expected: False)
+    lazydotnet.UnitTests.DashboardScreenTests.HelpKeyBinding_Match_ShouldOnlyTriggerOnQuestionMark(keyChar: '\0', key: Oem2, shift: False, alt: False, control: True, expected: False)
+    lazydotnet.UnitTests.DashboardScreenTests.HelpKeyBinding_Match_ShouldOnlyTriggerOnQuestionMark(keyChar: '\0', key: Oem2, shift: False, alt: True, control: False, expected: False)
+    lazydotnet.UnitTests.EditorServiceTests.GetEditorLaunchCommand_ShouldReturnCorrectArgs
+    lazydotnet.UnitTests.ExecutionServiceTests.GetOrCreateState_ShouldReturnNewState
+    lazydotnet.UnitTests.ExecutionServiceTests.IsRunning_ShouldReturnFalseForIdle
+    lazydotnet.UnitTests.ExecutionServiceTests.ProjectExecutionState_AddLog_ShouldStripAnsiAndLimitCount
+    lazydotnet.UnitTests.ExecutionServiceTests.StopAllAsync_ShouldNotThrow
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.0.1", expected: Patch)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.1.0", expected: Minor)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "2.0.0", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.0.0", expected: None)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.0.2", expected: Patch)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.2.0", expected: Minor)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "2.0.0", latest: "2.0.1", expected: Patch)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "2.0.0", latest: "2.1.0", expected: Minor)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "2.0.0", latest: "3.0.0", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0-beta", latest: "1.0.0", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "1.0.0-beta", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0-beta", latest: "1.0.0-rc1", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_GetUpdateType_ShouldReturnCorrectType(current: "1.0.0", latest: "2.0.0-beta", expected: Major)
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_IsOutdated_ShouldReturnTrue_WhenLatestDiffers
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_IsOutdated_ShouldReturnFalse_WhenSame
+    lazydotnet.UnitTests.NuGetServiceTests.NuGetPackageInfo_IsOutdated_ShouldReturnFalse_WhenLatestIsNull
+    lazydotnet.UnitTests.TestServiceTests.BuildTestTree_WithSimpleTests_ShouldReturnCorrectTree
+    lazydotnet.UnitTests.TestServiceTests.BuildTestTree_WithTheory_ShouldCreateTheoryContainer
+    lazydotnet.UnitTests.TestServiceTests.BuildTestTree_WithDotsInArguments_ShouldNotSplitArguments
+    lazydotnet.UnitTests.TestServiceTests.BuildTestTree_WithMultipleTheoryCasesInFqn_ShouldGroupThem
+    lazydotnet.IntegrationTests.IntegrationTests.XUnit3_Discovery_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.XUnit3_Execution_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.XUnit2_Discovery_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.XUnit2_Execution_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.NUnit_Discovery_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.MSTest_Discovery_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.FSharp_Discovery_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.FSharp_Execution_ShouldWork
+    lazydotnet.IntegrationTests.IntegrationTests.DiscoverTestsAsync_WithAllFixtureProjects_ShouldEvaluateThemAsTestProjects
+    lazydotnet.IntegrationTests.IntegrationTests.NuGet_SearchPackagesAsync_ShouldReturnResults
+    lazydotnet.IntegrationTests.ProjectServiceTests.GetProjectReferencesAsync_WithNoReferences_ShouldReturnEmpty
+    lazydotnet.IntegrationTests.ProjectServiceTests.GetProjectReferencesAsync_WithMultipleReferences_ShouldReturnAll
+    lazydotnet.IntegrationTests.ProjectServiceTests.RemoveProjectReferenceAsync_ShouldRemoveReference
+    lazydotnet.IntegrationTests.ProjectServiceTests.GetProjectReferencesAsync_WithFSharpProject_ShouldReturnAll
+    lazydotnet.IntegrationTests.SolutionServiceTests.FindAndParseSolutionAsync_WithCsproj_ShouldReturnSolutionInfo
+    lazydotnet.IntegrationTests.SolutionServiceTests.FindAndParseSolutionAsync_WithSln_ShouldReturnSolutionInfoWithProjects
+    lazydotnet.IntegrationTests.SolutionServiceTests.DiscoverWorkspacesAsync_ShouldFindProjectsAndSolutions
+    lazydotnet.IntegrationTests.SolutionServiceTests.FindAndParseSolutionAsync_WithNonExistentPath_ShouldReturnNull
