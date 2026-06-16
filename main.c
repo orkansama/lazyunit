@@ -3,6 +3,20 @@
 #include <stdio.h>
 #include <string.h>
 
+char *removeSpaces(char s[]) {
+  int inputLenght = strlen(s);
+  int currentChar = 0, iteration = 0;
+
+  while (currentChar < inputLenght) {
+    if (s[currentChar] != ' ') {
+      s[iteration++] = s[currentChar];
+    }
+    currentChar++;
+  }
+  s[iteration] = '\0';
+  return s;
+}
+
 WINDOW *TopWin(int top_win_height, int max_x) {
   WINDOW *win_top = newwin(top_win_height, max_x, 0, 0);
 
@@ -60,7 +74,9 @@ void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
     char a[256], b[256], c[256], d[256];
     bool lineIsValidTest =
         sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
+
     if (lineIsValidTest) {
+      char *newLine = removeSpaces(line);
       mvwprintw(windowToPrintAt, row, 2, "%s", newLine);
       wrefresh(windowToPrintAt);
       row++;
