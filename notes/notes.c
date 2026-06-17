@@ -29,7 +29,9 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  char line[4096];
+  const int MAX_LINE_SIZE = 4096;
+
+  char line[MAX_LINE_SIZE];
   int row = 1;
 
   char *currentProject = NULL;
