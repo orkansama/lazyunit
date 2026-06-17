@@ -4,23 +4,10 @@
 
 typedef struct {
   char Project[256];
+  char ProjectPart2[256];
   char File[256];
   char Test[256];
 } UnitTest;
-
-char *removeSpaces(char s[]) {
-  int inputLenght = strlen(s);
-  int currentChar = 0, iteration = 0;
-
-  while (currentChar < inputLenght) {
-    if (s[currentChar] != ' ') {
-      s[iteration++] = s[currentChar];
-    }
-    currentChar++;
-  }
-  s[iteration] = '\0';
-  return s;
-}
 
 int main(int argc, char *argv[]) {
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
@@ -34,8 +21,11 @@ int main(int argc, char *argv[]) {
   char line[MAX_LINE_SIZE];
   int row = 1;
 
-  char *currentProject = NULL;
-  char *currentFile = NULL;
+  // char *currentProject = NULL;
+  // char *currentFile = NULL;
+
+  char currentProject[256] = "";
+  char currentFile[256] = "";
 
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
 
@@ -43,39 +33,25 @@ int main(int argc, char *argv[]) {
     bool lineIsValidTest =
         sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
 
-    if (lineIsValidTest) {
-      char *lineNoWhitespaces = removeSpaces(line);
-      if (lineNoWhitespaces == NULL) {
-        printf("Error");
-        return -1;
-      }
-
+    if (lineIsValidTest && strstr(line, "Test run for") == NULL) {
       UnitTest testObject;
-      char temp[256];
 
-      sscanf(lineNoWhitespaces, "%255[^.].%255[^.].%255[^.].%255[^.]", temp,
-             testObject.Project, testObject.File, testObject.Test);
+      sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", testObject.Project,
+             testObject.ProjectPart2, testObject.File, testObject.Test);
 
-      if (currentProject == NULL ||
-          strcmp(currentProject, testObject.Project) != 0) {
+      strcat(testObject.Project, testObject.ProjectPart2);
 
-        static char savedProject[4096];
-        static char savedFile[4096];
-
-        strncpy(savedProject, testObject.Project, 4096);
-        currentProject = savedProject;
-        printf("%s\n", currentProject);
+      if (strcmp(currentProject, testObject.Project) != 0) {
+        strcpy(currentProject, testObject.Project);
+        printf("1 %s\n", currentProject);
       }
 
-      if (currentFile == NULL || strcmp(currentFile, testObject.File) != 0) {
-        static char savedFile[4096];
-
-        strncpy(savedFile, testObject.File, 4096);
-        currentFile = savedFile;
-        printf(" 󱞩 %s\n", currentFile);
+      if (strcmp(currentFile, testObject.File) != 0) {
+        strcpy(currentFile, testObject.File);
+        printf("2 %s\n", currentFile);
       }
 
-      printf("   󱞩 %s\n", testObject.Test);
+      printf("3 %s\n", testObject.Test);
     }
   }
 
