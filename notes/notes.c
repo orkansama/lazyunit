@@ -3,9 +3,9 @@
 #include <string.h>
 
 typedef struct {
-  char *Project;
-  char *File;
-  char *Test;
+  char Project[256];
+  char File[256];
+  char Test[256];
 } UnitTest;
 
 char *removeSpaces(char s[]) {
@@ -24,45 +24,58 @@ char *removeSpaces(char s[]) {
 
 int main(int argc, char *argv[]) {
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
+  if (dotnetTestCommand == NULL) {
+    printf("ERROR");
+    return -1;
+  }
 
   char line[4096];
   int row = 1;
 
+  char *currentProject = NULL;
+  char *currentFile = NULL;
+
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
+
     char a[256], b[256], c[256], d[256];
     bool lineIsValidTest =
         sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
 
     if (lineIsValidTest) {
-      char *lineWithNoWhitespaces = removeSpaces(line);
-
-      char lineArray[] = { *lineWithNoWhitespaces };
-
-      char Project[256], File[256], Test[256];
-      sscanf(lineArray, "%255[^.].%255[^.].%255[^.]", Project, File, Test);
-
-      char *currentProject = NULL;
-      char *currentFile = NULL;
-
-      int testArrayLenght = (sizeof tests / sizeof tests[0]);
-      for (size_t i = 0; i < testArrayLenght; i++) {
-
-        if (currentProject == NULL ||
-            strcmp(currentProject, tests[i].Project) != 0) {
-
-          currentProject = tests[i].Project;
-          currentFile = NULL;
-          printf("%s\n", currentProject);
-        }
-
-        if (currentFile == NULL || strcmp(currentFile, tests[i].File) != 0) {
-
-          currentFile = tests[i].File;
-          printf(" 󱞩 %s\n", currentFile);
-        }
-
-        printf("   󱞩 %s\n", tests[i].Test);
+      char *lineNoWhitespaces = removeSpaces(line);
+      if (lineNoWhitespaces == NULL) {
+        printf("Error");
+        return -1;
       }
+
+      UnitTest testObject;
+      char temp[256];
+
+      sscanf(lineNoWhitespaces, "%255[^.].%255[^.].%255[^.].%255[^.]", temp,
+             testObject.Project, testObject.File, testObject.Test);
+
+      if (currentProject == NULL ||
+          strcmp(currentProject, testObject.Project) != 0) {
+
+        static char savedProject[4096];
+        static char savedFile[4096];
+
+        strncpy(savedProject, testObject.Project, 4096);
+        currentProject = savedProject;
+        printf("%s\n", currentProject);
+      }
+
+      if (currentFile == NULL || strcmp(currentFile, testObject.File) != 0) {
+        static char savedFile[4096];
+
+        strncpy(savedFile, testObject.File, 4096);
+        currentFile = savedFile;
+        printf(" 󱞩 %s\n", currentFile);
+      }
+
+      printf("   󱞩 %s\n", testObject.Test);
     }
   }
+
+  pclose(dotnetTestCommand);
 }
