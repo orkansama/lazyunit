@@ -10,52 +10,7 @@ typedef struct {
   char Test[256];
 } UnitTest;
 
-WINDOW *TopWin(int top_win_height, int max_x) {
-  WINDOW *win_top = newwin(top_win_height, max_x, 0, 0);
-
-  box(win_top, 0, 0);
-  refresh();
-  wrefresh(win_top);
-
-  return win_top;
-}
-
-WINDOW *LeftWin(int top_win_height, int max_y, int max_x) {
-  int half_x = max_x / 2;
-
-  int winHeight = max_y - top_win_height;
-  int winWidth = max_x / 2;
-  int winStartTop = top_win_height;
-  int winStartLeft = 0;
-
-  WINDOW *win_left = newwin(winHeight, winWidth, winStartTop, winStartLeft);
-
-  box(win_left, 0, 0);
-  refresh();
-  wrefresh(win_left);
-
-  return win_left;
-}
-
-WINDOW *RightWin(int top_win_height, int max_y, int max_x) {
-  int half_x = max_x / 2;
-
-  int winHeight = max_y - top_win_height;
-  int winWidth = max_x / 2;
-  int winStartTop = top_win_height;
-  int winStartLeft = max_x / 2;
-
-  WINDOW *win_right = newwin(winHeight, winWidth, winStartTop, winStartLeft);
-
-  box(win_right, 0, 0);
-  refresh();
-  wrefresh(win_right);
-
-  return win_right;
-}
-
-void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
-
+void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
   if (dotnetTestCommand == NULL) {
     printf("ERROR");
@@ -80,19 +35,19 @@ void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
         strcat(testObject.Project, testObject.ProjectPart2);
 
         if (strcmp(currentProject, testObject.Project) != 0) {
-          wprintw(windowToPrintAt, "=> %s\n", testObject.Project);
-          wrefresh(windowToPrintAt);
+          wprintw(pad, "=> %s\n", testObject.Project);
+          prefresh(pad, 1, 0, 3, 11, 20, 68);
           strcpy(currentProject, testObject.Project);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
-          wprintw(windowToPrintAt, " => %s\n", testObject.File);
-          wrefresh(windowToPrintAt);
+          wprintw(pad, " => %s\n", testObject.File);
+          prefresh(pad, 1, 0, 3, 11, 20, 68);
           strcpy(currentFile, testObject.File);
         }
 
-        wprintw(windowToPrintAt, "  => %s\n", testObject.Test);
-        wrefresh(windowToPrintAt);
+        wprintw(pad, "  => %s\n", testObject.Test);
+        prefresh(pad, 1, 0, 3, 11, 20, 68);
       }
     };
   }
@@ -110,22 +65,23 @@ int main(void) {
   int max_y, max_x;
   getmaxyx(stdscr, max_y, max_x);
 
-  int TOP_WIN_HEIGHT = 3;
-  WINDOW *win_top = TopWin(TOP_WIN_HEIGHT, max_x);
-  WINDOW *win_left = LeftWin(TOP_WIN_HEIGHT, max_y, max_x);
-  WINDOW *win_right = RightWin(TOP_WIN_HEIGHT, max_y, max_x);
+  WINDOW *border = newwin(max_y, max_x, 0, 0);
+  box(border, 0, 0);
+  refresh();
+  wrefresh(border);
 
-  scrollok(win_left, true);
-  wrefresh(win_left);
+  WINDOW *mypad = newpad(max_y * 2, 1000);
+  ExecuteDotnetTest(mypad, max_x, max_y);
 
-  ExecuteDotnetTest(win_left, max_x, max_y);
+  while (getch() != 'q') {
+    switch (getch()) {
+    case KEY_DOWN:
+      break;
+      prefresh(mypad, 0, 0, 0, 0, 0, 20);
+    };
+  };
 
-  while (getch() != 'q')
-    ;
-
-  delwin(win_top);
-  delwin(win_left);
-  delwin(win_right);
+  delwin(border);
   endwin();
   return 0;
 }
