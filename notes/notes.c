@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,40 +18,34 @@ int main(int argc, char *argv[]) {
   const int MAX_LINE_SIZE = 4096;
 
   char line[MAX_LINE_SIZE];
-  int row = 1;
-
-  // char *currentProject = NULL;
-  // char *currentFile = NULL;
 
   char currentProject[256] = "";
   char currentFile[256] = "";
 
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
+    UnitTest testObject = {0};
 
-    char a[256], b[256], c[256], d[256];
-    bool lineIsValidTest =
-        sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
+    if (strstr(line, "Test run") == NULL) {
+      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]",
+                 testObject.Project, testObject.ProjectPart2, testObject.File,
+                 testObject.Test) == 4) {
 
-    if (lineIsValidTest && strstr(line, "Test run for") == NULL) {
-      UnitTest testObject;
+        strcat(testObject.Project, testObject.ProjectPart2);
 
-      sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", testObject.Project,
-             testObject.ProjectPart2, testObject.File, testObject.Test);
+        if (strcmp(currentProject, testObject.Project) != 0) {
+          printf("󱞩 %s\n", testObject.Project);
 
-      strcat(testObject.Project, testObject.ProjectPart2);
+          strcpy(currentProject, testObject.Project);
+        }
 
-      if (strcmp(currentProject, testObject.Project) != 0) {
-        strcpy(currentProject, testObject.Project);
-        printf("1 %s\n", currentProject);
+        if (strcmp(currentFile, testObject.File) != 0) {
+          printf(" 󱞩 %s\n", testObject.File);
+          strcpy(currentFile, testObject.File);
+        }
+
+        printf("  󱞩 %s\n", testObject.Test);
       }
-
-      if (strcmp(currentFile, testObject.File) != 0) {
-        strcpy(currentFile, testObject.File);
-        printf("2 %s\n", currentFile);
-      }
-
-      printf("3 %s\n", testObject.Test);
-    }
+    };
   }
 
   pclose(dotnetTestCommand);

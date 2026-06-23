@@ -3,19 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
-char *removeSpaces(char s[]) {
-  int inputLenght = strlen(s);
-  int currentChar = 0, iteration = 0;
-
-  while (currentChar < inputLenght) {
-    if (s[currentChar] != ' ') {
-      s[iteration++] = s[currentChar];
-    }
-    currentChar++;
-  }
-  s[iteration] = '\0';
-  return s;
-}
+typedef struct {
+  char Project[256];
+  char ProjectPart2[256];
+  char File[256];
+  char Test[256];
+} UnitTest;
 
 WINDOW *TopWin(int top_win_height, int max_x) {
   WINDOW *win_top = newwin(top_win_height, max_x, 0, 0);
@@ -62,26 +55,48 @@ WINDOW *RightWin(int top_win_height, int max_y, int max_x) {
 }
 
 void ExecuteDotnetTest(WINDOW *windowToPrintAt, int max_x, int max_y) {
-  FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
 
-  char line[4096];
+  FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
+  if (dotnetTestCommand == NULL) {
+    printf("ERROR");
+  }
+
+  const int MAX_LINE_SIZE = 4096;
   int row = 1;
 
-  // First argument: where to put the line
-  // Second argument: How big can the line be
-  // Third argument: Input Stream
-  while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
-    char a[256], b[256], c[256], d[256];
-    bool lineIsValidTest =
-        sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]", a, b, c, d) == 4;
+  char line[MAX_LINE_SIZE];
 
-    if (lineIsValidTest) {
-      char *newLine = removeSpaces(line);
-      mvwprintw(windowToPrintAt, row, 2, "%s", newLine);
-      wrefresh(windowToPrintAt);
-      row++;
-    }
+  char currentProject[256] = "";
+  char currentFile[256] = "";
+
+  while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
+    UnitTest testObject = {0};
+
+    if (strstr(line, "Test run") == NULL) {
+      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]",
+                 testObject.Project, testObject.ProjectPart2, testObject.File,
+                 testObject.Test) == 4) {
+
+        strcat(testObject.Project, testObject.ProjectPart2);
+
+        if (strcmp(currentProject, testObject.Project) != 0) {
+          wprintw(windowToPrintAt, "=> %s\n", testObject.Project);
+          wrefresh(windowToPrintAt);
+          strcpy(currentProject, testObject.Project);
+        }
+
+        if (strcmp(currentFile, testObject.File) != 0) {
+          wprintw(windowToPrintAt, " => %s\n", testObject.File);
+          wrefresh(windowToPrintAt);
+          strcpy(currentFile, testObject.File);
+        }
+
+        wprintw(windowToPrintAt, "  => %s\n", testObject.Test);
+        wrefresh(windowToPrintAt);
+      }
+    };
   }
+
   pclose(dotnetTestCommand);
 }
 
