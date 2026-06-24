@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -9,6 +10,12 @@ typedef struct {
   char File[256];
   char Test[256];
 } UnitTest;
+
+const char *ltrim(const char *s) {
+  while (isspace((unsigned char)*s))
+    s++;
+  return s;
+}
 
 void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
@@ -28,15 +35,17 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
     UnitTest testObject = {0};
 
     if (strstr(line, "Test run") == NULL) {
-      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]",
+      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^\n]",
                  testObject.Project, testObject.ProjectPart2, testObject.File,
                  testObject.Test) == 4) {
 
+        strcat(testObject.Project, ".");
         strcat(testObject.Project, testObject.ProjectPart2);
 
         if (strcmp(currentProject, testObject.Project) != 0) {
+          const char *trim = ltrim(testObject.Project);
           strcpy(currentProject, testObject.Project);
-          wprintw(pad, "=> %s\n", testObject.Project);
+          wprintw(pad, "=> %s\n", trim);
 
           // ┌────────────────┐
           // │                │
