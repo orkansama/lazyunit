@@ -35,19 +35,24 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
         strcat(testObject.Project, testObject.ProjectPart2);
 
         if (strcmp(currentProject, testObject.Project) != 0) {
-          wprintw(pad, "=> %s\n", testObject.Project);
-          prefresh(pad, 1, 0, 3, 11, 20, 68);
           strcpy(currentProject, testObject.Project);
+          wprintw(pad, "=> %s\n", testObject.Project);
+
+          // ┌────────────────┐
+          // │                │
+          // │                │
+          // └────────────────●  ← (start_y + height - 2,  start_x + width - 2)
+          prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
           wprintw(pad, " => %s\n", testObject.File);
-          prefresh(pad, 1, 0, 3, 11, 20, 68);
+          prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
           strcpy(currentFile, testObject.File);
         }
 
         wprintw(pad, "  => %s\n", testObject.Test);
-        prefresh(pad, 1, 0, 3, 11, 20, 68);
+        prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
       }
     };
   }
@@ -73,12 +78,16 @@ int main(void) {
   WINDOW *mypad = newpad(max_y * 2, 1000);
   ExecuteDotnetTest(mypad, max_x, max_y);
 
-  while (getch() != 'q') {
-    switch (getch()) {
-    case KEY_DOWN:
-      break;
-      prefresh(mypad, 0, 0, 0, 0, 0, 20);
-    };
+  int ch;
+  int scroll = 0;
+
+  while ((ch = getch()) != EOF && ch != 'q') {
+    if (ch == KEY_DOWN) {
+      prefresh(mypad, scroll + 1, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+    }
+    if (ch == KEY_UP) {
+      prefresh(mypad, scroll - 1, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+    }
   };
 
   delwin(border);
