@@ -10,9 +10,9 @@ typedef struct {
 } UnitTest;
 
 const char *ltrim(const char *s) {
-    while (isspace((unsigned char)*s))
-        s++;
-    return s;
+  while (isspace((unsigned char)*s))
+    s++;
+  return s;
 }
 
 int main(int argc, char *argv[]) {
@@ -43,16 +43,16 @@ int main(int argc, char *argv[]) {
         // 󱞩
         if (strcmp(currentProject, testObject.Project) != 0) {
           const char *trim = ltrim(testObject.Project);
-          printf("1=>%s\n", trim);
+          printf("󱞩 %s\n", trim);
           strcpy(currentProject, testObject.Project);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
-          printf("2=>%s\n", testObject.File);
+          printf(" 󱞩 %s\n", testObject.File);
           strcpy(currentFile, testObject.File);
         }
 
-        printf("3=>%s\n", testObject.Test);
+        printf("  󱞩 %s\n", testObject.Test);
       }
     };
   }
