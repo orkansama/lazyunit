@@ -75,7 +75,7 @@ int main(void) {
   refresh();
   wrefresh(border);
 
-  WINDOW *mypad = newpad(max_y * 2, 1000);
+  WINDOW *mypad = newpad(max_y * 5, max_x * 5);
   ExecuteDotnetTest(mypad, max_x, max_y);
 
   int ch;
@@ -83,10 +83,14 @@ int main(void) {
 
   while ((ch = getch()) != EOF && ch != 'q') {
     if (ch == KEY_DOWN) {
-      prefresh(mypad, scroll + 1, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+      scroll++;
+      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
     }
     if (ch == KEY_UP) {
-      prefresh(mypad, scroll - 1, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+      if (scroll > 0) {
+        scroll--;
+      }
+      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
     }
   };
 
