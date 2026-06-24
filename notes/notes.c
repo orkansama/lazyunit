@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     UnitTest testObject = {0};
 
     if (strstr(line, "Test run") == NULL) {
-      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^.]",
+      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^\n]",
                  testObject.Project, testObject.ProjectPart2, testObject.File,
                  testObject.Test) == 4) {
 
