@@ -11,6 +11,53 @@ typedef struct {
   char Test[256];
 } UnitTest;
 
+const char *ltrim(const char *s);
+void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y);
+
+int main(void) {
+  initscr();
+  if (!has_colors()) {
+    // TODO: SEPERATE ERROR WINDOW / OVERLAY
+  }
+  start_color();
+  cbreak();
+  noecho();
+  keypad(stdscr, TRUE);
+  curs_set(0);
+
+  int max_y, max_x;
+  getmaxyx(stdscr, max_y, max_x);
+
+  WINDOW *border = newwin(max_y, max_x, 0, 0);
+  box(border, 0, 0);
+  refresh();
+  wrefresh(border);
+
+  WINDOW *mypad = newpad(max_y * 5, max_x * 5);
+  UnitTest testObjects[500] = {0};
+  ExecuteDotnetTest(mypad, max_x, max_y);
+
+  int ch;
+  int scroll = 0;
+
+  while ((ch = getch()) != EOF && ch != 'q') {
+    if (ch == KEY_DOWN) {
+      scroll++;
+      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+    }
+    if (ch == KEY_UP) {
+      if (scroll > 0) {
+        scroll--;
+      }
+      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+    }
+  };
+
+  delwin(border);
+  endwin();
+  return 0;
+}
+
 const char *ltrim(const char *s) {
   while (isspace((unsigned char)*s))
     s++;
@@ -30,6 +77,7 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 
   char currentProject[256] = "";
   char currentFile[256] = "";
+  int itrCount = 0;
 
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
     UnitTest testObject = {0};
@@ -62,48 +110,12 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 
         wprintw(pad, "  => %s\n", testObject.Test);
         prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+
+        testObjects[itrCount] = testObject;
+        itrCount++;
       }
     };
   }
 
   pclose(dotnetTestCommand);
-}
-
-int main(void) {
-  initscr();
-  cbreak();
-  noecho();
-  keypad(stdscr, TRUE);
-  curs_set(0);
-
-  int max_y, max_x;
-  getmaxyx(stdscr, max_y, max_x);
-
-  WINDOW *border = newwin(max_y, max_x, 0, 0);
-  box(border, 0, 0);
-  refresh();
-  wrefresh(border);
-
-  WINDOW *mypad = newpad(max_y * 5, max_x * 5);
-  ExecuteDotnetTest(mypad, max_x, max_y);
-
-  int ch;
-  int scroll = 0;
-
-  while ((ch = getch()) != EOF && ch != 'q') {
-    if (ch == KEY_DOWN) {
-      scroll++;
-      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
-    }
-    if (ch == KEY_UP) {
-      if (scroll > 0) {
-        scroll--;
-      }
-      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
-    }
-  };
-
-  delwin(border);
-  endwin();
-  return 0;
 }
