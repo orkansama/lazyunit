@@ -34,30 +34,42 @@ int main(void) {
   refresh();
   wrefresh(border);
 
-  WINDOW *mypad = newpad(max_y * 5, max_x * 5);
+  WINDOW *myPad = newpad(max_y * 5, max_x * 5);
   UnitTest testObjects[500] = {0};
-  ExecuteDotnetTest(mypad, max_x, max_y);
+  ExecuteDotnetTest(myPad, max_x, max_y);
 
   move(0, 0);
 
   int ch;
-  int scroll = 0;
+  int scroll = -1;
+  int paddingTop = 0;
+  int triggerScrollDistance = max_y - 12;
 
   while ((ch = getch()) != EOF && ch != 'q') {
-    if (ch == KEY_DOWN) {
+    // DOWN
+    if (ch == 'j') {
       scroll++;
+      mvwchgat(myPad, scroll - 1, 0, -1, A_NORMAL, 0, NULL);
+      mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
 
-      mvwchgat(mypad, scroll, 0, -1, A_REVERSE, 0, NULL);
-      wrefresh(mypad);
+      if (scroll >= paddingTop + triggerScrollDistance) {
+        paddingTop = scroll - triggerScrollDistance;
+      }
 
-      // prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+      prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
     }
-    // if (ch == KEY_UP) {
-    // if (scroll > 0) {
-    // scroll--;
-    // }
-    // prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
-    // }
+    // UP
+    if (ch == 'k') {
+      scroll--;
+      mvwchgat(myPad, scroll + 1, 0, -1, A_NORMAL, 0, NULL);
+      mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
+
+      if (scroll < paddingTop) {
+        paddingTop = scroll;
+      }
+
+      prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
+    }
   };
 
   delwin(border);
@@ -105,7 +117,8 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
           // ┌────────────────┐
           // │                │
           // │                │
-          // └────────────────●  ← (start_y + height - 2,  start_x + width - 2)
+          // └────────────────●  ← (start_y + height - 2,  start_x + width -
+          // 2)
           prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
         }
 
