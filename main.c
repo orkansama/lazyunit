@@ -20,6 +20,7 @@ int main(void) {
     // TODO: SEPERATE ERROR WINDOW / OVERLAY
   }
   start_color();
+  init_pair(999, COLOR_RED, COLOR_GREEN);
   cbreak();
   noecho();
   keypad(stdscr, TRUE);
@@ -37,20 +38,26 @@ int main(void) {
   UnitTest testObjects[500] = {0};
   ExecuteDotnetTest(mypad, max_x, max_y);
 
+  move(0, 0);
+
   int ch;
   int scroll = 0;
 
   while ((ch = getch()) != EOF && ch != 'q') {
     if (ch == KEY_DOWN) {
       scroll++;
-      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+
+      mvwchgat(mypad, scroll, 0, -1, A_REVERSE, 0, NULL);
+      wrefresh(mypad);
+
+      // prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
     }
-    if (ch == KEY_UP) {
-      if (scroll > 0) {
-        scroll--;
-      }
-      prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
-    }
+    // if (ch == KEY_UP) {
+    // if (scroll > 0) {
+    // scroll--;
+    // }
+    // prefresh(mypad, scroll, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
+    // }
   };
 
   delwin(border);
@@ -110,9 +117,6 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 
         wprintw(pad, "  => %s\n", testObject.Test);
         prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
-
-        testObjects[itrCount] = testObject;
-        itrCount++;
       }
     };
   }
