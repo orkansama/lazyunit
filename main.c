@@ -13,6 +13,7 @@ typedef struct {
 
 const char *ltrim(const char *s);
 void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y);
+int DotnetTestCount();
 
 int main(void) {
   initscr();
@@ -34,8 +35,8 @@ int main(void) {
   refresh();
   wrefresh(border);
 
-  WINDOW *myPad = newpad(max_y * 5, max_x * 5);
-  UnitTest testObjects[500] = {0};
+  int testCount = DotnetTestCount();
+  WINDOW *myPad = newpad(testCount, max_x);
   ExecuteDotnetTest(myPad, max_x, max_y);
 
   move(0, 0);
@@ -84,23 +85,23 @@ const char *ltrim(const char *s) {
 }
 
 void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
+  int testCount = 0;
+
+  // TODO: Setting to set build true/false
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
   if (dotnetTestCommand == NULL) {
     printf("ERROR");
   }
 
   const int MAX_LINE_SIZE = 4096;
-  int row = 1;
 
   char line[MAX_LINE_SIZE];
 
   char currentProject[256] = "";
   char currentFile[256] = "";
-  int itrCount = 0;
 
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
     UnitTest testObject = {0};
-
     if (strstr(line, "Test run") == NULL) {
       if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^\n]",
                  testObject.Project, testObject.ProjectPart2, testObject.File,
@@ -110,6 +111,8 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
         strcat(testObject.Project, testObject.ProjectPart2);
 
         if (strcmp(currentProject, testObject.Project) != 0) {
+          testCount++;
+          wprintw(pad, "%d", testCount);
           const char *trim = ltrim(testObject.Project);
           strcpy(currentProject, testObject.Project);
           wprintw(pad, "=> %s\n", trim);
@@ -123,11 +126,15 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
+          testCount++;
+          wprintw(pad, "%d", testCount);
           wprintw(pad, " => %s\n", testObject.File);
           prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
           strcpy(currentFile, testObject.File);
         }
 
+        testCount++;
+        wprintw(pad, "%d", testCount);
         wprintw(pad, "  => %s\n", testObject.Test);
         prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
       }
@@ -135,4 +142,47 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
   }
 
   pclose(dotnetTestCommand);
+}
+
+int DotnetTestCount() {
+  int testCount = 0;
+
+  // TODO: Setting to set build true/false
+  FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
+  if (dotnetTestCommand == NULL) {
+    printf("ERROR");
+  }
+
+  const int MAX_LINE_SIZE = 4096;
+
+  char line[MAX_LINE_SIZE];
+
+  char currentProject[256] = "";
+  char currentFile[256] = "";
+
+  while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
+    UnitTest testObject = {0};
+    if (strstr(line, "Test run") == NULL) {
+      if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^\n]",
+                 testObject.Project, testObject.ProjectPart2, testObject.File,
+                 testObject.Test) == 4) {
+
+        strcat(testObject.Project, ".");
+        strcat(testObject.Project, testObject.ProjectPart2);
+
+        if (strcmp(currentProject, testObject.Project) != 0) {
+          testCount++;
+        }
+
+        if (strcmp(currentFile, testObject.File) != 0) {
+          testCount++;
+        }
+
+        testCount++;
+      }
+    };
+  }
+
+  pclose(dotnetTestCommand);
+  return testCount;
 }
