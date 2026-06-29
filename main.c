@@ -13,7 +13,7 @@ typedef struct {
 
 const char *ltrim(const char *s);
 void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y);
-int DotnetTestCount();
+int OccupiedRowCount();
 
 int main(void) {
   initscr();
@@ -35,41 +35,44 @@ int main(void) {
   refresh();
   wrefresh(border);
 
-  int testCount = DotnetTestCount();
-  WINDOW *myPad = newpad(testCount, max_x);
+  int occupiedRowCount = OccupiedRowCount();
+  WINDOW *myPad = newpad(occupiedRowCount, max_x);
   ExecuteDotnetTest(myPad, max_x, max_y);
 
-  move(0, 0);
-
   int ch;
-  int scroll = -1;
+  int scroll = 0;
   int paddingTop = 0;
   int triggerScrollDistance = max_y - 12;
 
   while ((ch = getch()) != EOF && ch != 'q') {
     // DOWN
-    if (ch == 'j') {
-      scroll++;
-      mvwchgat(myPad, scroll - 1, 0, -1, A_NORMAL, 0, NULL);
-      mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
+    if (scroll < occupiedRowCount - 1) {
+      if (ch == 'j') {
+        scroll++;
+        mvwchgat(myPad, scroll - 1, 0, -1, A_NORMAL, 0, NULL);
+        mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
+        wprintw(myPad, "%d", scroll);
 
-      if (scroll >= paddingTop + triggerScrollDistance) {
-        paddingTop = scroll - triggerScrollDistance;
+        if (scroll >= paddingTop + triggerScrollDistance) {
+          paddingTop = scroll - triggerScrollDistance;
+        }
+
+        prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
       }
-
-      prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
     }
     // UP
     if (ch == 'k') {
-      scroll--;
-      mvwchgat(myPad, scroll + 1, 0, -1, A_NORMAL, 0, NULL);
-      mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
+      if (scroll >= -1) {
+        scroll--;
+        mvwchgat(myPad, scroll + 1, 0, -1, A_NORMAL, 0, NULL);
+        mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
 
-      if (scroll < paddingTop) {
-        paddingTop = scroll;
+        if (scroll < paddingTop) {
+          paddingTop = scroll;
+        }
+
+        prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
       }
-
-      prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
     }
   };
 
@@ -144,7 +147,7 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
   pclose(dotnetTestCommand);
 }
 
-int DotnetTestCount() {
+int OccupiedRowCount() {
   int testCount = 0;
 
   // TODO: Setting to set build true/false
@@ -170,12 +173,15 @@ int DotnetTestCount() {
         strcat(testObject.Project, ".");
         strcat(testObject.Project, testObject.ProjectPart2);
 
+        // 󱞩
         if (strcmp(currentProject, testObject.Project) != 0) {
           testCount++;
+          strcpy(currentProject, testObject.Project);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
           testCount++;
+          strcpy(currentFile, testObject.File);
         }
 
         testCount++;
