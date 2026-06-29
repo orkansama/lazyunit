@@ -44,14 +44,15 @@ int main(void) {
   int paddingTop = 0;
   int triggerScrollDistance = max_y - 12;
 
+  mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
+  prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
+
   while ((ch = getch()) != EOF && ch != 'q') {
-    // DOWN
-    if (scroll < occupiedRowCount - 1) {
+    if (scroll <= occupiedRowCount - 2) {
       if (ch == 'j') {
         scroll++;
         mvwchgat(myPad, scroll - 1, 0, -1, A_NORMAL, 0, NULL);
         mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
-        wprintw(myPad, "%d", scroll);
 
         if (scroll >= paddingTop + triggerScrollDistance) {
           paddingTop = scroll - triggerScrollDistance;
@@ -60,9 +61,8 @@ int main(void) {
         prefresh(myPad, paddingTop, 0, 2, 2, max_y - 2, max_x - 2);
       }
     }
-    // UP
-    if (ch == 'k') {
-      if (scroll >= -1) {
+    if (scroll > 0) {
+      if (ch == 'k') {
         scroll--;
         mvwchgat(myPad, scroll + 1, 0, -1, A_NORMAL, 0, NULL);
         mvwchgat(myPad, scroll, 0, -1, A_REVERSE, 0, NULL);
@@ -115,7 +115,6 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 
         if (strcmp(currentProject, testObject.Project) != 0) {
           testCount++;
-          wprintw(pad, "%d", testCount);
           const char *trim = ltrim(testObject.Project);
           strcpy(currentProject, testObject.Project);
           wprintw(pad, "=> %s\n", trim);
@@ -130,14 +129,12 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 
         if (strcmp(currentFile, testObject.File) != 0) {
           testCount++;
-          wprintw(pad, "%d", testCount);
           wprintw(pad, " => %s\n", testObject.File);
           prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
           strcpy(currentFile, testObject.File);
         }
 
         testCount++;
-        wprintw(pad, "%d", testCount);
         wprintw(pad, "  => %s\n", testObject.Test);
         prefresh(pad, 0, 0, 2, 2, 0 + max_y - 2, 0 + max_x - 2);
       }
@@ -148,7 +145,7 @@ void ExecuteDotnetTest(WINDOW *pad, int max_x, int max_y) {
 }
 
 int OccupiedRowCount() {
-  int testCount = 0;
+  int rowCount = 0;
 
   // TODO: Setting to set build true/false
   FILE *dotnetTestCommand = popen("cat ~/lazyunit/tests.txt", "r");
@@ -175,20 +172,20 @@ int OccupiedRowCount() {
 
         // 󱞩
         if (strcmp(currentProject, testObject.Project) != 0) {
-          testCount++;
+          rowCount++;
           strcpy(currentProject, testObject.Project);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
-          testCount++;
+          rowCount++;
           strcpy(currentFile, testObject.File);
         }
 
-        testCount++;
+        rowCount++;
       }
     };
   }
 
   pclose(dotnetTestCommand);
-  return testCount;
+  return rowCount;
 }

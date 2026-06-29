@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
 
         printf("Test: %d\n", count);
         count++;
-        printf("\n");
       }
     };
   }
