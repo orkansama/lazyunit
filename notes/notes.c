@@ -29,9 +29,10 @@ int main(int argc, char *argv[]) {
   char currentProject[256] = "";
   char currentFile[256] = "";
 
+  int count = 1;
+
   while (fgets(line, sizeof(line), dotnetTestCommand) != NULL) {
     UnitTest testObject = {0};
-
     if (strstr(line, "Test run") == NULL) {
       if (sscanf(line, "%255[^.].%255[^.].%255[^.].%255[^\n]",
                  testObject.Project, testObject.ProjectPart2, testObject.File,
@@ -42,17 +43,19 @@ int main(int argc, char *argv[]) {
 
         // 󱞩
         if (strcmp(currentProject, testObject.Project) != 0) {
-          const char *trim = ltrim(testObject.Project);
-          printf("󱞩 %s\n", trim);
+          printf("Project: %d\n", count);
+          count++;
           strcpy(currentProject, testObject.Project);
         }
 
         if (strcmp(currentFile, testObject.File) != 0) {
-          printf(" 󱞩 %s\n", testObject.File);
+          printf("File: %d\n", count);
+          count++;
           strcpy(currentFile, testObject.File);
         }
 
-        printf("  󱞩 %s\n", testObject.Test);
+        printf("Test: %d\n", count);
+        count++;
       }
     };
   }
